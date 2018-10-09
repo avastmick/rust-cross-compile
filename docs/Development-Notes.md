@@ -4,12 +4,12 @@ Follow the following steps to enable development.
 
 <!-- vim-markdown-toc GitLab -->
 
-- [Local Cross-Compilation](#local-cross-compilation)
-  - [General Notes](#general-notes)
+- [Cross-Compilation](#cross-compilation)
   - [Steps](#steps)
+  - [Local machine Steps](#local-machine-steps)
 - [Emulation](#emulation)
   - [Usage](#usage)
-  - [Coding](#coding)
+- [General Notes](#general-notes)
 - [Current Issues](#current-issues)
   - [QEMU Segmentation Fault on Compile in Container](#qemu-segmentation-fault-on-compile-in-container)
     - [Why - Idea One](#why-idea-one)
@@ -20,7 +20,7 @@ Follow the following steps to enable development.
 
 <!-- vim-markdown-toc -->
 
-## Local Cross-Compilation
+## Cross-Compilation
 
 Developing directly on the target hardware (in this instance, a RaspberryPi) is less than ideal, does not scale, nor allow for easy CI. Therefore the general recommendation is to cross-compile to the target architecture instead.
 
@@ -30,32 +30,21 @@ Most of the steps were taken from the following:
 - [Jorge Aparicio's Rust Cross instructions](https://github.com/japaric/rust-cross)
 - [Takeshix's instructions](https://gist.github.com/takeshixx/686a4b5e057deff7892913bf69bcb85a)
 
-### General Notes
+But, the best approach is to do this using Docker so your local machine doesn't end up with a heap of cruft that causes other issues.
 
-ARM versions:
+The best way to do this is using the [Rust Embedded `cross` project](https://github.com/rust-embedded/cross) which supplies a pretty good interface that operates in the familiar `cargo` style.
 
-- ARM version 7: for reference most later ARM devices and the RaspberryPi 2 and 3 - Broadcom BCM2836 / BCM2837
-- ARM version 6: this is the target for a POC as we are targeting the RaspberryPi Zero - Broadcom BCM2835
-
-Therefore, we need to ensure the correct compiler and toolchain. Note that many of the cross compilation instructions are targeting ARM v7, not the ARM v6 we are wanting here.
-
-- Target: ARM v6
-  - Toolchain: right so the toolchain recommended in the instructions, `gnueabihf`, the **hf** means it's going to link against **hard-float** objects that are not supported by the ARM1176JZF-S core found in the BCM2835 SoC of the RaspberryPi Zero. 
-  - Flags: the following flags are required to "turn off" the hard-float object generation.
-    - 
-
-**Alternatives**
-
-The general issues with the toolchain for ARMv6 targets is messy and problematic. However, for a RaspberryPi there seems to be a specific solution due to the extended compilation for Raspbian. The following article details how to create a viable SDK:
-
-- [Raspbian cross compilation SDK](https://medium.com/@zw3rk/making-a-raspbian-cross-compilation-sdk-830fe56d75ba)
-
-AT this point this approach is untested.
-
-- Use Linux. If you're using Windows or Mac, you're on your own!
-- Use a Debian-based distro, if you're wedded to Arch (as I was), it's a lot more painful.
+The downside is that the default Docker images don't often work outside of the happy path and struggle with complex libraries such as `libsodium`. So I created a set of tuned images, initially targetting RaspberryPi, to more carefully install and configure what is needed. To use these edit the `Cross.toml` file to access - this repository has the ARM v6 and v7 targets preconfigured, as well as an emulator to allow testing of compiled binaries.
 
 ### Steps
+
+- Install `cross` - `cargo install cross`
+- `cross test --target arm-unknown-linux-gnueabi`
+
+
+### Local machine Steps
+
+I really don't recommend this approach, in fact, I've not managed to get a clean build using this method - there are just too many variables to debug imo.
 
 Add the toolchain for Rust:
 
@@ -99,16 +88,30 @@ Dependencies:
 
 - `sudo apt-get install qemu-user-static`
 
-Simply:
+## General Notes
 
-- `./build-devenv.sh`
-- `./run-devenv.sh`
+ARM versions:
 
-### Coding
+- ARM version 7: for reference most later ARM devices and the RaspberryPi 2 and 3 - Broadcom BCM2836 / BCM2837
+- ARM version 6: this is the target for a POC as we are targeting the RaspberryPi Zero - Broadcom BCM2835
 
-The rust compiler is fast on inside the container, so to do complete `cargo` builds, the recommendation is to do this.
+Therefore, we need to ensure the correct compiler and toolchain. Note that many of the cross compilation instructions are targeting ARM v7, not the ARM v6 we are wanting here.
 
-However, for editors (Vim, VS-Code etc.) you'll need a local version and the compilation is best done using a cross target.
+- Target: ARM v6
+  - Toolchain: right so the toolchain recommended in the instructions, `gnueabihf`, the **hf** means it's going to link against **hard-float** objects that are not supported by the ARM1176JZF-S core found in the BCM2835 SoC of the RaspberryPi Zero. 
+  - Flags: the following flags are required to "turn off" the hard-float object generation.
+    - 
+
+**Alternatives**
+
+The general issues with the toolchain for ARMv6 targets is messy and problematic. However, for a RaspberryPi there seems to be a specific solution due to the extended compilation for Raspbian. The following article details how to create a viable SDK:
+
+- [Raspbian cross compilation SDK](https://medium.com/@zw3rk/making-a-raspbian-cross-compilation-sdk-830fe56d75ba)
+
+AT this point this approach is untested.
+
+- Use Linux. If you're using Windows or Mac, you're on your own!
+- Use a Debian-based distro, if you're wedded to Arch (as I was), it's a lot more painful.
 
 ## Current Issues
 
@@ -167,6 +170,7 @@ No apport report written because MaxReports is reached already
  /var/cache/apt/archives/libc6-armhf-cross_2.27-3ubuntu1cross1.1_all.deb
 E: Sub-process /usr/bin/dpkg returned an error code (1)
 ```
+ I'd recommend there using the `rust-cross` crate to do this, using the supplied cross-compile containers instead of directly on the host computer and messing that up with a bunch of cruft you'd only use occasionally.
 
 #### Clean up
 

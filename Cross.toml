@@ -5,8 +5,8 @@
 # List the targets and choose a suitable container.
 # This should work for ARM v6 targets, including the RaspberryPi 1 and Zero
 [target.arm-unknown-linux-gnueabi]
-  image = "avastmick/arm-unknown-linux-gnueabi:latest"
+  image = "avastmick/rust-cross-compile:arm-unknown-linux-gnueabi"
 
 # This should work for ARM v7 targets, as well as all Raspbian installed Pis
 [target.arm-unknown-linux-gnueabihf]
-  image = "avastmick/arm-unknown-linux-gnueabihf:latest"
+  image = "avastmick/rust-cross-compile:arm-unknown-linux-gnueabihf"
