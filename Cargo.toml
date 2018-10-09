@@ -1,0 +1,15 @@
+[package]
+name = "rust-cross-compile"
+version = "0.0.1"
+authors = ["avastmick <avastmick@protonmail.com>"]
+license = "MIT/Apache-2.0"
+homepage = "https://gitlab.com/avastmick/rust-cross-compile"
+repository = "https://gitlab.com/avastmick/rust-cross-compile.git"
+description = "Boilerplate project set-up for simpler Rust compilation for cryptography."
+keywords = ["device", "crypto", "cryptography", "libsodium"]
+categories = ["hardware", "cryptography", "security"]
+readme = "README.md"
+
+[dependencies]
+sodiumoxide = "0.1.0"
+

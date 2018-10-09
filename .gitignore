@@ -1,0 +1,9 @@
+# Standard Rust artifacts
+target/
+**/*.rs.bk
+Cargo.lock
+
+# RPI Container ignores
+.bash_history
+# In case of container qemu crashes
+*.core
