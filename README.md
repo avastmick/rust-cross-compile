@@ -1,28 +1,32 @@
 # rust-cross-compile
 
-
 <!-- vim-markdown-toc GitLab -->
 
-- [Script](#script)
+- [What is this for?](#what-is-this-for)
+- [Usage](#usage)
+- [Status](#status)
+- [More](#more)
 
 <!-- vim-markdown-toc -->
 
-A set of cross-compile targets using the rust-embedded/cross crate and tuned Docker containers
+## What is this for?
+
+Firstly, a big shout out to the [Rust Embedded Tools Team](https://github.com/rust-embedded/wg#the-tools-team), particularly the [cross](https://github.com/rust-embedded/cross) project.
+
+However, these projects are focussed on pure Rust development and I have found that they mostly fail when using C-based libraries, such as [libsodium](https://github.com/jedisct1/libsodium). These have some very nice Rust binding, in the case of `libsodium` the crate I use is [sodiumoxide](https://github.com/sodiumoxide/sodiumoxide), but I find I cannot simply cross-compile everything using the `cross` tooling as there are issues with the underlying Docker images.
+
+So, what we have here is a set of tuned cross-compile Docker images that work with the rust-embedded/cross crate.
+
+## Usage
+
+Simply clone locally and then use as a project template for your work.
 
 
+## Status
 
-## Script
+Under current development, after a time away. 
 
-```
-# Cross compile for arm-unknown-linux-gnueabi (ARM v6)
-# Build the docker image
-docker build docker/arm-unknown-linux-gnueabi/. --tag avastmick/rust-cross-compile:arm-unknown-linux-gnueabi;
-# Run the test
-cross test --target arm-unknown-linux-gnueabi
-#
-# Now do the same for arm-unknown-linux-gnueabihf (Raspberrypi ARM v7) 
-# Build the docker image
-docker build docker/arm-unknown-linux-gnueabihf/. --tag avastmick/rust-cross-compile:arm-unknown-linux-gnueabihf;
-# Run the test
-cross test --target arm-unknown-linux-gnueabihf
-```
+## More
+
+Look at the [docs](docs) folder for more information on cross-compiling Rust. In particular, the [Development Notes](docs/Development-Notes.md) and the [Docker Configuration](docs/Docker-Configuration.md).
+

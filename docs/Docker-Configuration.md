@@ -6,6 +6,7 @@ The notes in each `Dockerfile` are added as comments. These are not present in t
 
 <!-- vim-markdown-toc GitLab -->
 
+- [Usage](#usage)
 - [General Status](#general-status)
 - [avastmick/rust-cross-compile:arm-unknown-linux-gnueabi](#avastmickrust-cross-compilearm-unknown-linux-gnueabi)
   - [Current status:](#current-status)
@@ -18,7 +19,23 @@ The notes in each `Dockerfile` are added as comments. These are not present in t
   - [Dockerfile](#dockerfile-1)
 
 <!-- vim-markdown-toc -->
- 
+
+## Usage
+
+```
+# Cross compile for arm-unknown-linux-gnueabi (ARM v6)
+# Build the docker image
+docker build docker/arm-unknown-linux-gnueabi/. --tag avastmick/rust-cross-compile:arm-unknown-linux-gnueabi;
+# Run the test
+cross test --target arm-unknown-linux-gnueabi
+#
+# Now do the same for arm-unknown-linux-gnueabihf (Raspberrypi ARM v7) 
+# Build the docker image
+docker build docker/arm-unknown-linux-gnueabihf/. --tag avastmick/rust-cross-compile:arm-unknown-linux-gnueabihf;
+# Run the test
+cross test --target arm-unknown-linux-gnueabihf
+```
+
 ## General Status
 
 The goal is make the following Docker images available on the [hub.docker.com](https://hub.docker.com) registry.
